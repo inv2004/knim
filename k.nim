@@ -96,7 +96,7 @@ proc `[]`[T](a: openArray[T], idx: openArray[int]): seq[T] =
   for i, idx in idx:
     result[i] = a[idx]
 
-func each[T](f: proc(_: T): T, x: openArray[T]): seq[T] =
+func each[T](f: proc(_: T): T, x: openArray[T]): seq[T] =   # TODO: Cannot redefine backtick: probably can do via AST processing
   result = newSeq[T](x.len)
   for i, x in x:
     result[i] = f(x)
@@ -112,6 +112,17 @@ func each[T](f: proc(_, u, uu: T): T, a, b, c: openArray[T]): seq[T] =
   result = newSeq[T](a.len)
   for i, x in a:
     result[i] = f(x, b[i], c[i])
+
+func `/`[T](f: proc(_, u: T): T, x: openArray[T]): T =
+  result = x[0]
+  for x in x[1..^1]:
+    result = f(result, x)
+
+func `\`[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
+  result = newSeq[T](x.len)
+  result[0] = x[0]
+  for i, x in x[1..^1]:
+    result[i+1] = f(result[i], x)
 
 test "plus":
   check @[1,2,3] + @[10,10,10] == @[11, 12, 13]
@@ -159,3 +170,15 @@ test "each":
     x + y + z
   check each(sum2, [1.0,2,3], [10.0,20,30], [100.0,200,300]) == [111.0,222,333]
 
+test "over":
+  proc sum(x, y: int): int =
+    x + y
+  check sum/[1,2,3] == 6
+  proc sumA(x, y: seq[int]): seq[int] =
+    x + y
+  check sumA/[@[1,2,3], @[10,20,30]] == [11,22,33]
+
+test "scan":
+  proc sum(x, y: int): int =
+    x + y
+  check sum\[1,2,3] == [1,3,6]
