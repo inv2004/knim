@@ -58,40 +58,40 @@ math(`-`, `-`)
 math(`*`, `*`)
 math(`%`, `/`)
 
-proc `+`[T](x: openArray[T]): seq[T] =
+func `+`[T](x: openArray[T]): seq[T] =
   reversed(x)
 
-proc `-`[T](x: openArray[T]): seq[T] =
+func `-`[T](x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)
   for i, x in x:
     result[i] = -x
 
-proc `*`[T](x: openArray[T]): T =
+func `*`[T](x: openArray[T]): T =
   if x.len > 0:
     result = x[0]
 
-proc `===`[T](a, b: openArray[T]): seq[bool] =
+func `===`[T](a, b: openArray[T]): seq[bool] =
   checkLen(a, b)
   result = newSeq[bool](a.len)
   for i, x in a:
     result[i] = x == b[i]
 
-proc `===`[T](a: openArray[T], b: T): seq[bool] =
+func `===`[T](a: openArray[T], b: T): seq[bool] =
   result = newSeq[bool](a.len)
   for i, x in a:
     result[i] = x == b
 
-proc `===`[T](a: T, b: openArray[T]): seq[bool] =
+func `===`[T](a: T, b: openArray[T]): seq[bool] =
   result = newSeq[bool](b.len)
   for i, x in b:
     result[i] = x == a
 
-proc `&`(x: openArray[bool]): seq[int] =
+func `&`(x: openArray[bool]): seq[int] =
   for i, x in x:
     if x:
       result.add i
 
-proc `[]`[T](a: openArray[T], idx: openArray[int]): seq[T] =
+func `[]`[T](a: openArray[T], idx: openArray[int]): seq[T] =
   result = newSeq[T](idx.len)
   for i, idx in idx:
     result[i] = a[idx]
@@ -160,25 +160,14 @@ test "index":
   check [3,2,3][`&` [3,2,3] === 3] == @[3,3]
 
 test "each":
-  proc add10(x: int): int =
-    x + 10
-  check each(add10, [1,2,3]) == [11,12,13]
-  proc sum(x, y: int): int =
-    x + y
-  check each(sum, [1,2,3], [10,20,30]) == [11,22,33]
-  proc sum2(x, y, z: float): float =
-    x + y + z
-  check each(sum2, [1.0,2,3], [10.0,20,30], [100.0,200,300]) == [111.0,222,333]
+  check each((x:int) => x+10, [1,2,3]) == [11,12,13]
+  check each((x,y:int) => x+y, [1,2,3], [10,20,30]) == [11,22,33]
+  check each((x,y,z:float) => x+y+z, [1.0,2,3], [10.0,20,30], [100.0,200,300]) == [111.0,222,333]
 
 test "over":
-  proc sum(x, y: int): int =
-    x + y
-  check sum/[1,2,3] == 6
-  proc sumA(x, y: seq[int]): seq[int] =
-    x + y
-  check sumA/[@[1,2,3], @[10,20,30]] == [11,22,33]
+  check ((x,y:int) => x+y)/[1,2,3] == 6
+  check ((x,y:seq[int]) => x+y)/[@[1,2,3], @[10,20,30]] == [11,22,33]
 
 test "scan":
-  proc sum(x, y: int): int =
-    x + y
-  check sum\[1,2,3] == [1,3,6]
+  check ((x,y:int) => x+y)\[1,2,3] == [1,3,6]
+  check ((x,y:seq[int]) => x+y)\[@[1,2,3], @[10,20,30]] == [@[1,2,3], @[11,22,33]]
