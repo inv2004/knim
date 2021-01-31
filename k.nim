@@ -27,27 +27,25 @@
 # \\ exit  /comment \trace [:return 'signal if do while]
 
 import algorithm
-import sugar
-import unittest
 
 proc checkLen[T, G](a: openArray[T], b: openArray[G]) =
   if a.len != b.len:
     raise newException(ValueError, "len")
 
 template math(opn: untyped, op: untyped = opn) =
-  proc opn[T: SomeNumber](a, b: openArray[T]): seq[T] =
+  proc opn*[T: SomeNumber](a, b: openArray[T]): seq[T] =
     checkLen(a, b)
     result = newSeq[T](a.len)
     for i, x in a:
       result[i] = op(x, b[i])
 
-  proc opn[T: SomeInteger, G: SomeFloat](a: openArray[T], b: openArray[G]): seq[G] =
+  proc opn*[T: SomeInteger, G: SomeFloat](a: openArray[T], b: openArray[G]): seq[G] =
     checkLen(a, b)
     result = newSeq[G](a.len)
     for i, x in a:
       result[i] = op(x.G, b[i])
 
-  proc opn[T: SomeFloat, G: SomeInteger](a: openArray[T], b: openArray[G]): seq[T] =
+  proc opn*[T: SomeFloat, G: SomeInteger](a: openArray[T], b: openArray[G]): seq[T] =
     checkLen(a, b)
     result = newSeq[T](a.len)
     for i, x in a:
@@ -58,116 +56,93 @@ math(`-`, `-`)
 math(`*`, `*`)
 math(`%`, `/`)
 
-func `+`[T](x: openArray[T]): seq[T] =
-  reversed(x)
-
-func `-`[T](x: openArray[T]): seq[T] =
+func `-`*[T](x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)
   for i, x in x:
     result[i] = -x
 
-func `*`[T](x: openArray[T]): T =
+func `*`*[T](x: openArray[T]): T =
   if x.len > 0:
     result = x[0]
 
-func `===`[T](a, b: openArray[T]): seq[bool] =
+template `~`*(a, b: untyped): bool =
+  a == b
+
+func `===`*[T](a, b: openArray[T]): seq[bool] =
   checkLen(a, b)
   result = newSeq[bool](a.len)
   for i, x in a:
     result[i] = x == b[i]
 
-func `===`[T](a: openArray[T], b: T): seq[bool] =
+func `===`*[T](a: openArray[T], b: T): seq[bool] =
   result = newSeq[bool](a.len)
   for i, x in a:
     result[i] = x == b
 
-func `===`[T](a: T, b: openArray[T]): seq[bool] =
+func `===`*[T](a: T, b: openArray[T]): seq[bool] =
   result = newSeq[bool](b.len)
   for i, x in b:
     result[i] = x == a
 
-func `&`(x: openArray[bool]): seq[int] =
+template `===`*(a, b: SomeNumber): bool =
+  a == b
+
+func `|`*[T](x: openArray[T]): seq[T] =
+  reversed(x)
+
+func `|`*[T](a, b: openArray[T]): seq[int] =
+  checkLen(a, b)
+  result = newSeq[T](a.len)
+  for i, x in a:
+    result[i] = x | b[i]
+
+template `|`*(a, b: SomeNumber): SomeNumber =
+  max(a, b)
+
+func `&`*[T](a, b: openArray[T]): seq[int] =
+  checkLen(a, b)
+  result = newSeq[T](a.len)
+  for i, x in a:
+    result[i] = x & b[i]
+
+func `&`*(x: openArray[bool]): seq[int] =
   for i, x in x:
     if x:
       result.add i
 
-func `[]`[T](a: openArray[T], idx: openArray[int]): seq[T] =
+template `&`*(a, b: SomeNumber): SomeNumber =
+  min(a, b)
+
+func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
   result = newSeq[T](idx.len)
   for i, idx in idx:
     result[i] = a[idx]
 
-func each[T](f: proc(_: T): T, x: openArray[T]): seq[T] =   # TODO: Cannot redefine backtick: probably can do via AST processing
+func `each`*[T](f: proc(_: T): T, x: openArray[T]): seq[T] =   # TODO: Cannot redefine backtick: probably can do via AST processing
   result = newSeq[T](x.len)
   for i, x in x:
     result[i] = f(x)
 
-func each[T](f: proc(_, u: T): T, a, b: openArray[T]): seq[T] =
+func `each`*[T](f: proc(_, u: T): T, a, b: openArray[T]): seq[T] =
   checkLen(a, b)
   result = newSeq[T](a.len)
   for i, x in a:
     result[i] = f(x, b[i])
 
-func each[T](f: proc(_, u, uu: T): T, a, b, c: openArray[T]): seq[T] =
+func `each`*[T](f: proc(_, u, uu: T): T, a, b, c: openArray[T]): seq[T] =
   checkLen(a, b)
   result = newSeq[T](a.len)
   for i, x in a:
     result[i] = f(x, b[i], c[i])
 
-func `/`[T](f: proc(_, u: T): T, x: openArray[T]): T =
+func `/`*[T](f: proc(_, u: T): T, x: openArray[T]): T =
   result = x[0]
   for x in x[1..^1]:
     result = f(result, x)
 
-func `\`[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
+func `\`*[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)
   result[0] = x[0]
   for i, x in x[1..^1]:
     result[i+1] = f(result[i], x)
 
-test "plus":
-  check [1,2,3] + [10,10,10] == [11, 12, 13]
-  check [1.0,2,3] + [10.0,10,10] == [11.0, 12, 13]
-  check [1,2,3] + [10.0,10,10] == [11.0, 12, 13]
-  check [1.0,2,3] + [10,10,10] == [11.0, 12, 13]
-
-test "div":
-  check [1,2,3] % [10.0,10,10] == [0.1, 0.2, 0.3]  # TODO
-
-test "flip":
-  check +[1,2,3] == [3,2,1]
-
-test "minus":
-  check -[1,2,3] == [-1,-2,-3]
-
-test "first":
-  check *[1,2,3] == 1
-  let emptyI: seq[int] = @[]
-  check *emptyI == 0
-  let emptyF: seq[float] = @[]
-  check *emptyF == 0.0
-
-test "equal":
-  check ([1,2,3] === [1,12,3]) == [true, false, true]
-  check ([3,2,3] === 3) == [true, false, true]
-  check (3 === [3,2,3]) == [true, false, true]
-
-test "where":
-  check &[true, false, true] == @[0,2]
-  check (`&` [3,2,3] === 3) == @[0,2]
-
-test "index":
-  check [3,2,3][[0,2]] == [3,3]
-  check [3,2,3][`&` [3,2,3] === 3] == [3,3]
-
-test "each":
-  check each((x:int) => x+10, [1,2,3]) == [11,12,13]
-  check each((x,y:int) => x+y, [1,2,3], [10,20,30]) == [11,22,33]
-  check each((x,y,z:float) => x+y+z, [1.0,2,3], [10.0,20,30], [100.0,200,300]) == [111.0,222,333]
-
-test "over":
-  check ((x,y:int) => x+y)/[1,2,3] == 6
-  check ((x,y:seq[int]) => x+y)/[@[1,2,3], @[10,20,30]] == [11,22,33]
-
-test "scan":
-  check ((x,y:int) => x+y)\[1,2,3] == [1,3,6]
-  check ((x,y:seq[int]) => x+y)\[@[1,2,3], @[10,20,30]] == [@[1,2,3], @[11,22,33]]
