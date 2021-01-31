@@ -65,7 +65,7 @@ func `*`*[T](x: openArray[T]): T =
   if x.len > 0:
     result = x[0]
 
-template `~`*(a, b: typed): bool =
+func `~`*[T,G](a: T, b: G): bool =
   a == b
 
 func `===`*[T](a, b: openArray[T]): seq[bool] =
