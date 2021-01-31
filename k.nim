@@ -27,6 +27,7 @@
 # \\ exit  /comment \trace [:return 'signal if do while]
 
 import algorithm
+import sugar
 import unittest
 
 proc checkLen[T, G](a: openArray[T], b: openArray[G]) =
@@ -95,6 +96,23 @@ proc `[]`[T](a: openArray[T], idx: openArray[int]): seq[T] =
   for i, idx in idx:
     result[i] = a[idx]
 
+func each[T](f: proc(_: T): T, x: openArray[T]): seq[T] =
+  result = newSeq[T](x.len)
+  for i, x in x:
+    result[i] = f(x)
+
+func each[T](f: proc(_, u: T): T, a, b: openArray[T]): seq[T] =
+  checkLen(a, b)
+  result = newSeq[T](a.len)
+  for i, x in a:
+    result[i] = f(x, b[i])
+
+func each[T](f: proc(_, u, uu: T): T, a, b, c: openArray[T]): seq[T] =
+  checkLen(a, b)
+  result = newSeq[T](a.len)
+  for i, x in a:
+    result[i] = f(x, b[i], c[i])
+
 test "plus":
   check @[1,2,3] + @[10,10,10] == @[11, 12, 13]
   check @[1.0,2,3] + @[10.0,10,10] == @[11.0, 12, 13]
@@ -129,3 +147,15 @@ test "where":
 test "index":
   check [3,2,3][[0,2]] == @[3,3]
   check [3,2,3][`&` [3,2,3] === 3] == @[3,3]
+
+test "each":
+  proc add10(x: int): int =
+    x + 10
+  check each(add10, [1,2,3]) == [11,12,13]
+  proc sum(x, y: int): int =
+    x + y
+  check each(sum, [1,2,3], [10,20,30]) == [11,22,33]
+  proc sum2(x, y, z: float): float =
+    x + y + z
+  check each(sum2, [1.0,2,3], [10.0,20,30], [100.0,200,300]) == [111.0,222,333]
+
