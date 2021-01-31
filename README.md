@@ -10,9 +10,11 @@ Also, redefinition of the return type is not possible in static-language of cour
 ### Advantage
 Because the templates go via preprocessor of the static language it can catch some cases which duck-typed K cant:
 
+** I will add more cases here**
+
 ```
 l2021.01.29 9GB (c)shakti 2.0
- (1,2,3)+1b
+ (1 2 3)+1b    // I did not find old version, but I expected 2 3 4
 -9223372036854775807 -9223372036854775806 -9223372036854775805
 ```
 
