@@ -61,7 +61,7 @@ func `-`*[T](x: openArray[T]): seq[T] =
   for i, x in x:
     result[i] = -x
 
-func `+`*[T](x: seq[seq[T]]): seq[seq[T]] =   # TODO more checks
+func `+`*[T](x: openArray[seq[T]]): seq[seq[T]] =   # TODO more checks
   for x in x:
     result.add newSeq[T]()
     for i, y in x:
