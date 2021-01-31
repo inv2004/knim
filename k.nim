@@ -110,6 +110,9 @@ func `&`*(x: openArray[bool]): seq[int] =
     if x:
       result.add i
 
+template where*(x: untyped): untyped =
+  `&` x
+
 func `&`*(a, b: not openArray): SomeNumber =
   min(a, b)
 
