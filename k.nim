@@ -65,7 +65,7 @@ func `*`*[T](x: openArray[T]): T =
   if x.len > 0:
     result = x[0]
 
-template `~`*(a, b: untyped): bool =
+template `~`*(a, b: typed): bool =
   a == b
 
 func `===`*[T](a, b: openArray[T]): seq[bool] =
@@ -84,7 +84,7 @@ func `===`*[T](a: T, b: openArray[T]): seq[bool] =
   for i, x in b:
     result[i] = x == a
 
-template `===`*(a, b: SomeNumber): bool =
+func `===`*(a, b: not openArray): bool =
   a == b
 
 func `|`*[T](x: openArray[T]): seq[T] =
@@ -96,7 +96,7 @@ func `|`*[T](a, b: openArray[T]): seq[int] =
   for i, x in a:
     result[i] = x | b[i]
 
-template `|`*(a, b: SomeNumber): SomeNumber =
+func `|`*(a, b: not openArray): SomeNumber =
   max(a, b)
 
 func `&`*[T](a, b: openArray[T]): seq[int] =
@@ -110,7 +110,7 @@ func `&`*(x: openArray[bool]): seq[int] =
     if x:
       result.add i
 
-template `&`*(a, b: SomeNumber): SomeNumber =
+func `&`*(a, b: not openArray): SomeNumber =
   min(a, b)
 
 func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
