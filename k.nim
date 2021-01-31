@@ -125,19 +125,19 @@ func `\`[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
     result[i+1] = f(result[i], x)
 
 test "plus":
-  check @[1,2,3] + @[10,10,10] == @[11, 12, 13]
-  check @[1.0,2,3] + @[10.0,10,10] == @[11.0, 12, 13]
-  check @[1,2,3] + @[10.0,10,10] == @[11.0, 12, 13]
-  check @[1.0,2,3] + @[10,10,10] == @[11.0, 12, 13]
+  check [1,2,3] + [10,10,10] == [11, 12, 13]
+  check [1.0,2,3] + [10.0,10,10] == [11.0, 12, 13]
+  check [1,2,3] + [10.0,10,10] == [11.0, 12, 13]
+  check [1.0,2,3] + [10,10,10] == [11.0, 12, 13]
 
 test "div":
-  check @[1,2,3] % @[10.0,10,10] == @[0.1, 0.2, 0.3]  # TODO
+  check [1,2,3] % [10.0,10,10] == [0.1, 0.2, 0.3]  # TODO
 
 test "flip":
-  check +[1,2,3] == @[3,2,1]
+  check +[1,2,3] == [3,2,1]
 
 test "minus":
-  check -[1,2,3] == @[-1,-2,-3]
+  check -[1,2,3] == [-1,-2,-3]
 
 test "first":
   check *[1,2,3] == 1
@@ -147,17 +147,17 @@ test "first":
   check *emptyF == 0.0
 
 test "equal":
-  check ([1,2,3] === [1,12,3]) == @[true, false, true]
-  check ([3,2,3] === 3) == @[true, false, true]
-  check (3 === [3,2,3]) == @[true, false, true]
+  check ([1,2,3] === [1,12,3]) == [true, false, true]
+  check ([3,2,3] === 3) == [true, false, true]
+  check (3 === [3,2,3]) == [true, false, true]
 
 test "where":
   check &[true, false, true] == @[0,2]
   check (`&` [3,2,3] === 3) == @[0,2]
 
 test "index":
-  check [3,2,3][[0,2]] == @[3,3]
-  check [3,2,3][`&` [3,2,3] === 3] == @[3,3]
+  check [3,2,3][[0,2]] == [3,3]
+  check [3,2,3][`&` [3,2,3] === 3] == [3,3]
 
 test "each":
   check each((x:int) => x+10, [1,2,3]) == [11,12,13]
