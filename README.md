@@ -1,7 +1,7 @@
 # knim
 
 ### Descripion
-K language in 15 minutes :) Not really, it is very primitive concept made in one hour, just trying to add template system to redefine some K's monadic and dyadic verbs and adverbs, and to check if it helps with some type-errors.
+K language in 60 minutes :) Not really, it is very primitive concept made in one hour, just trying to add template system to redefine some K's monadic and dyadic verbs and adverbs, and to check if it helps with some type-errors.
 
 ### Limitations
 At the moment I am not 100% sure how to redefine system functions like ``==``, that is why I use ``===`` for it.
