@@ -40,6 +40,7 @@ test "index":
 
 test "min":
   check ([3,2,1] & [1,2,3]) ~ [1,2,1]
+  check ([3,2,1] & [1,2,3]) ~ [1,2,1]
   check (3 & 1) ~ 1
 
 test "max":
