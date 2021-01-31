@@ -33,7 +33,7 @@ proc checkLen[T, G](a: openArray[T], b: openArray[G]) =
     raise newException(ValueError, "len")
 
 template math(opn: untyped, op: untyped = opn) =
-  proc opn*[T: SomeNumber](a, b: openArray[T]): seq[T] =
+  proc opn*[T](a, b: openArray[T]): seq[T] =
     checkLen(a, b)
     result = newSeq[T](a.len)
     for i, x in a:
@@ -60,6 +60,12 @@ func `-`*[T](x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)
   for i, x in x:
     result[i] = -x
+
+func `+`*[T](x: seq[seq[T]]): seq[seq[T]] =   # TODO more checks
+  for x in x:
+    result.add newSeq[T]()
+    for i, y in x:
+      result[i].add y
 
 func `*`*[T](x: openArray[T]): T =
   if x.len > 0:
@@ -110,11 +116,11 @@ func `&`*(x: openArray[bool]): seq[int] =
     if x:
       result.add i
 
-template where*(x: untyped): untyped =
-  `&` x
-
 func `&`*(a, b: not openArray): SomeNumber =
   min(a, b)
+
+template where*(x: untyped): untyped =
+  `&` x
 
 func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
   result = newSeq[T](idx.len)
