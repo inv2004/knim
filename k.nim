@@ -62,8 +62,12 @@ func `-`*[T](x: openArray[T]): seq[T] =
     result[i] = -x
 
 func `+`*[T](x: openArray[seq[T]]): seq[seq[T]] =   # TODO more checks
+  var maxL = 0
   for x in x:
-    result.add newSeq[T]()
+    if x.len > maxL:
+      for _ in (result.len+1)..x.len:
+        result.add newSeq[T]()
+      maxL = x.len
     for i, y in x:
       result[i].add y
 
