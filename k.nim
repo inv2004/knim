@@ -78,6 +78,14 @@ func `*`*[T](x: openArray[T]): T =
 func `~`*[T,G](a: T, b: G): bool =
   a == b
 
+func `~`*(x: bool): bool =
+  not x
+
+func `~`*(x: openArray[bool]): seq[bool] =
+  result = newSeq[bool](x.len)
+  for i, x in x:
+    result[i] = `~`(x)
+
 func `===`*[T](a, b: openArray[T]): seq[bool] =
   checkLen(a, b)
   result = newSeq[bool](a.len)
@@ -108,6 +116,12 @@ func `|`*[T](a, b: openArray[T]): seq[int] =
 
 func `|`*(a, b: not openArray): SomeNumber =
   max(a, b)
+
+func count*[T](x: openArray[T]): int =
+  x.len
+
+func take*[T](n: int, x: openArray[T]): seq[T] =
+  x[0..^n]
 
 func `&`*[T](a, b: openArray[T]): seq[int] =
   checkLen(a, b)
@@ -152,6 +166,11 @@ func `/`*[T](f: proc(_, u: T): T, x: openArray[T]): T =
   result = x[0]
   for x in x[1..^1]:
     result = f(result, x)
+
+func `/`*[T](f: proc(_: T): T, n:int, x: openArray[T]): T =
+  result = x
+  for i in 0..n:
+    result = f(result)
 
 func `\`*[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)

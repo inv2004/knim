@@ -51,6 +51,10 @@ test "max":
   check ([3,2,1] | [1,2,3]) ~ [3,2,3]
   check (3 | 1) ~ 3
 
+test "not":
+  check (~[true, false, true]) ~ [false, true, false]
+  check ~true ~ false
+
 test "each":
   check each((x:int) => x+10, [1,2,3]) ~ [11,12,13]
   check each((x,y:int) => x+y, [1,2,3], [10,20,30]) ~ [11,22,33]
@@ -63,3 +67,10 @@ test "over":
 test "scan":
   check ((x,y:int) => x+y)\[1,2,3] ~ [1,3,6]
   check ((x,y:seq[int]) => x+y)\[@[1,2,3], @[10,20,30]] ~ [@[1,2,3], @[11,22,33]]
+
+test "count/take":
+  check count([1,2,3]) ~ 3
+  check take(2, [1,2,3]) ~ [1,2]
+
+# test "fibonacci":
+#   `/`((x:seq[int]) => x)10/[1,1]
