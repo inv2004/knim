@@ -207,5 +207,5 @@ func `scan`*[T](f0: proc(_: T): bool, f1: proc(_: T): T, x: T): seq[T] =
   while f0(result[^1]):
     result.add f1(result[^1])
 
-template t*{`*` asc x}(x:openArray) =
+template o*{k.`*` k.asc x}(x: untyped): untyped =
   x.min()

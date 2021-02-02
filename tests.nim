@@ -82,7 +82,9 @@ test "fibonacci":
   let fibs = over(10, (x:seq[int]) => x & ((x,y:int) => x+y)/take(-2, x), @[1,1])
   check fibs == [1,1,2,3,5,8,13,21,34,55,89,144]
 
+# template o*{k.`*` k.asc x}(x: untyped): untyped =
+#   x.min()
+
 test "optimization":
-  let a = * asc [13,12,11]
+  let a = `*` asc [13,12,11]
   check a ~ 11
-  # echo a
