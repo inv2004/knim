@@ -121,7 +121,10 @@ func count*[T](x: openArray[T]): int =
   x.len
 
 func take*[T](n: int, x: openArray[T]): seq[T] =
-  x[0..^n]
+  if n >= 0:
+    x[0..^n]
+  else:
+    x[^(-n)..^1]
 
 func `&`*[T](a, b: openArray[T]): seq[int] =
   checkLen(a, b)
@@ -139,6 +142,13 @@ func `&`*(a, b: not openArray): SomeNumber =
 
 template where*(x: untyped): untyped =
   `&` x
+
+func asc*[T](x: openArray[T]): seq[T] =
+  debugEcho "asc"
+  x.sorted()
+
+func desc*[T](x: openArray[T]): seq[T] =
+  x.sorted(order = Descending)
 
 func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
   result = newSeq[T](idx.len)
@@ -167,10 +177,15 @@ func `/`*[T](f: proc(_, u: T): T, x: openArray[T]): T =
   for x in x[1..^1]:
     result = f(result, x)
 
-func `/`*[T](f: proc(_: T): T, n:int, x: openArray[T]): T =
+func `over`*[T](n: int, f: proc(_: T): T, x: T): T =
   result = x
-  for i in 0..n:
+  for i in 0..<n:
     result = f(result)
+
+func `over`*[T](f0: proc(_: T): bool, f1: proc(_: T): T, x: T): T =
+  result = x
+  while f0(result):
+    result = f1(result)
 
 func `\`*[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
   result = newSeq[T](x.len)
@@ -178,3 +193,19 @@ func `\`*[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
   for i, x in x[1..^1]:
     result[i+1] = f(result[i], x)
 
+func `scan`*[T](n: int, f: proc(_: T): T, x: T): seq[T] =
+  result = newSeq[T](n+1)
+  if n <= 0:
+    return
+  result[0] = x
+  for i in 1..n:
+    result[i] = f(result[i-1])
+
+func `scan`*[T](f0: proc(_: T): bool, f1: proc(_: T): T, x: T): seq[T] =
+  result = newSeq[T]()
+  result.add(x)
+  while f0(result[^1]):
+    result.add f1(result[^1])
+
+template t*{`*` asc x}(x:openArray) =
+  x.min()

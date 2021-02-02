@@ -1,5 +1,6 @@
 import k
 import sugar
+import math
 import unittest
 
 test "plus":
@@ -55,6 +56,11 @@ test "not":
   check (~[true, false, true]) ~ [false, true, false]
   check ~true ~ false
 
+test "count/take":
+  check count([1,2,3]) ~ 3
+  check take(2, [1,2,3]) ~ [1,2]
+  check take(-2, [1,2,3,4,5]) ~ [4,5]
+
 test "each":
   check each((x:int) => x+10, [1,2,3]) ~ [11,12,13]
   check each((x,y:int) => x+y, [1,2,3], [10,20,30]) ~ [11,22,33]
@@ -63,14 +69,20 @@ test "each":
 test "over":
   check ((x,y:int) => x+y)/[1,2,3] ~ 6
   check ((x,y:seq[int]) => x+y)/[@[1,2,3], @[10,20,30]] ~ [11,22,33]
+  check over(3, (x:int) => x+1, 10) == 13
+  check over((x:int) => x<13, (x:int) => x+1, 10) == 13
 
 test "scan":
   check ((x,y:int) => x+y)\[1,2,3] ~ [1,3,6]
   check ((x,y:seq[int]) => x+y)\[@[1,2,3], @[10,20,30]] ~ [@[1,2,3], @[11,22,33]]
+  check scan(3, (x:int) => x+1, 10) == [10,11,12,13]
+  check scan((x:int) => x<13, (x:int) => x+1, 10) ~ [10,11,12,13]
 
-test "count/take":
-  check count([1,2,3]) ~ 3
-  check take(2, [1,2,3]) ~ [1,2]
+test "fibonacci":
+  let fibs = over(10, (x:seq[int]) => x & ((x,y:int) => x+y)/take(-2, x), @[1,1])
+  check fibs == [1,1,2,3,5,8,13,21,34,55,89,144]
 
-# test "fibonacci":
-#   `/`((x:seq[int]) => x)10/[1,1]
+test "optimization":
+  let a = * asc [13,12,11]
+  check a ~ 11
+  # echo a

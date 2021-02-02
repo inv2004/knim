@@ -4,7 +4,9 @@
 K language in 60 minutes :) Not really, it is very primitive concept made in one hour, just trying to add template system to redefine some K's monadic and dyadic verbs and adverbs, and to check if it helps with some type-errors.
 
 ### Limitations
-I am not 100% sure how to redefine system functions like ``==`` at the moment, that is why I use ``===`` for it.
+I am not 100% sure how to redefine system ops like ``==`` or ``#`` that is why I use ``===`` or long names for them.
+
+Nim does not type inference which calculates backward, that is why you have to use lamdas with type annotations
 
 ### Advantage
 Because the templates go via preprocessor of the static language, it can catch some cases which duck-typed K cant:
