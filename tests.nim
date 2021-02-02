@@ -4,10 +4,12 @@ import math
 import unittest
 
 test "plus":
-  check [1,2,3] + [10,10,10] ~ [11, 12, 13]
-  check [1.0,2,3] + [10.0,10,10] ~ [11.0, 12, 13]
-  check [1,2,3] + [10.0,10,10] ~ [11.0, 12, 13]
-  check [1.0,2,3] + [10,10,10] ~ [11.0, 12, 13]
+  check [1,2,3] + [10,10,10] ~ [11,12,13]
+  check [1.0,2,3] + [10.0,10,10] ~ [11.0,12,13]
+  check [1,2,3] + [10.0,10,10] ~ [11.0,12,13]
+  check [1.0,2,3] + [10,10,10] ~ [11.0,12,13]
+  check [1,2,3] + 10 ~ [11,12,13]
+  # check 10 + [1,2,3] ~ [11,12,13]
 
 test "div":
   check [1,2,3] % [10.0,10,10] ~ [0.1, 0.2, 0.3]  # TODO
@@ -34,6 +36,10 @@ test "equal":
   check ([3,2,3] === 3) ~ [true, false, true]
   check (3 === [3,2,3]) ~ [true, false, true]
   check (3 === 3) ~ true
+  check ("abc" === "aac") ~ [true, false, true]
+  check ("aba" === 'a') ~ [true, false, true]
+  check ('c' === "cbc") ~ [true, false, true]
+  check ('c' === 'c') ~ true
 
 test "where":
   check &[true, false, true] ~ @[0,2]
@@ -88,3 +94,6 @@ template o*{k.`*` k.asc x}(x: untyped): untyped =
 test "optimization":
   let a = `*` asc [13,12,11]
   check a ~ 11
+
+test "compile_error":
+  check compiles(100+"abc") == false

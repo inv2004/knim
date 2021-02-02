@@ -39,17 +39,24 @@ template math(opn: untyped, op: untyped = opn) =
     for i, x in a:
       result[i] = op(x, b[i])
 
-  proc opn*[T: SomeInteger, G: SomeFloat](a: openArray[T], b: openArray[G]): seq[G] =
+  proc opn*[T](a: T, b: openArray[T]): seq[T] =
+    result = newSeq[T](b.len)
+    for i, x in b:
+      result[i] = op(a, x)
+
+  proc opn*[T](a: openArray[T], b: T): seq[T] =
+    result = newSeq[T](a.len)
+    for i, x in a:
+      result[i] = op(x, b)
+
+  proc opn*[T: not SomeFloat; G: SomeFloat](a: openArray[T], b: openArray[G]): seq[G] =
     checkLen(a, b)
     result = newSeq[G](a.len)
     for i, x in a:
       result[i] = op(x.G, b[i])
 
-  proc opn*[T: SomeFloat, G: SomeInteger](a: openArray[T], b: openArray[G]): seq[T] =
-    checkLen(a, b)
-    result = newSeq[T](a.len)
-    for i, x in a:
-      result[i] = op(x, b[i].T)
+  proc opn*[T: SomeFloat; G: not SomeFloat](a: openArray[T], b: openArray[G]): seq[T] =   # optimize via template
+    opn(b, a)
 
 math(`+`, `+`)
 math(`-`, `-`)
@@ -90,20 +97,36 @@ func `===`*[T](a, b: openArray[T]): seq[bool] =
   checkLen(a, b)
   result = newSeq[bool](a.len)
   for i, x in a:
-    result[i] = x == b[i]
+    result[i] = x ~ b[i]
 
 func `===`*[T](a: openArray[T], b: T): seq[bool] =
   result = newSeq[bool](a.len)
   for i, x in a:
-    result[i] = x == b
+    result[i] = x ~ b
 
 func `===`*[T](a: T, b: openArray[T]): seq[bool] =
   result = newSeq[bool](b.len)
   for i, x in b:
-    result[i] = x == a
+    result[i] = x ~ a
+
+func `===`*(a, b: string): seq[bool] =
+  checkLen(a, b)
+  result = newSeq[bool](a.len)
+  for i, x in a:
+    result[i] = x ~ b[i]
+
+func `===`*(a: string, b: char): seq[bool] =
+  result = newSeq[bool](a.len)
+  for i, x in a:
+    result[i] = x ~ b
+
+func `===`*(a: char, b: string): seq[bool] =
+  result = newSeq[bool](b.len)
+  for i, x in b:
+    result[i] = x ~ a
 
 func `===`*(a, b: not openArray): bool =
-  a == b
+  a ~ b
 
 func `|`*[T](x: openArray[T]): seq[T] =
   reversed(x)

@@ -17,15 +17,17 @@ Because the templates go via preprocessor of the static language, it can catch s
 l2021.01.29 9GB (c)shakti 2.0
  (1 2 3)+1b    // I did not set prev version, but I expected 2 3 4
 -9223372036854775807 -9223372036854775806 -9223372036854775805
+ "hello"+100   // not a fun to catch it in prod
+204 201 208 208 211
 ```
 
 ```
 knim: [1,2,3]+true
-type mismatch: got <array[0..2, int], bool>
+Error: type mismatch: got <array[0..2, int], bool>
 but expected one of:
 ...
-proc `+`[T: SomeNumber](a`gensym1, b`gensym1: openArray[T]): seq[T]
-  first type mismatch at position: 2
-  required type for b`gensym1: openArray[T: SomeNumber]
-  but expression 'true' is of type: bool
+
+knim: "hello"+100
+Error: type mismatch: got <string, int literal(100)>
+but expected one of:
 ```
