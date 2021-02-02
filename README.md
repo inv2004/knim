@@ -15,7 +15,7 @@ Because the templates go via preprocessor of the static language, it can catch s
 
 ```
 l2021.01.29 9GB (c)shakti 2.0
- (1 2 3)+1b    // I did not find the old version, but I expected 2 3 4
+ (1 2 3)+1b    // I did not set prev version, but I expected 2 3 4
 -9223372036854775807 -9223372036854775806 -9223372036854775805
 ```
 
