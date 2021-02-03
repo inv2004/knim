@@ -178,6 +178,11 @@ func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
   for i, idx in idx:
     result[i] = a[idx]
 
+func `[]`*(a: string, idx: openArray[int]): string =
+  result = newString(idx.len)
+  for i, idx in idx:
+    result[i] = a[idx]
+
 func each*[T,G](f: proc(_: T): G, x: openArray[T]): seq[G] =   # TODO: Cannot redefine backtick: probably can do via AST processing
   result = newSeq[G](x.len)
   for i, x in x:

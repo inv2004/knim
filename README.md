@@ -11,6 +11,20 @@ Nim does not type inference which calculates backward, that is why you have to u
 ### Advantage
 Because the templates go via preprocessor of the static language, it can catch some cases which duck-typed K cant:
 
+### Comparison
+| k                            | knim                  | result        |
+|------------------------------|-----------------------|---------------|
+| 10 20 30+1 2 3               | [10,20,30]+[1,2,3]    |               |
+| - 1 2 3                      | -[1,2,3]              | eq            |
+| ~ 1 2 3                      | ~[1,2,3]              | compile error |
+| 2>1 2 3                      | 2>[1,2,3]             | eq            |
+| 1&2                          | 1 & 2                 | eq            |
+| "abc"="acc"                  | "abc"==="acc"         | eq            |
+| "acc"@&"acc"="c"             | "acc"[`&`"acc"==='c'] | eq            |
+| 1+101b                       | 1+[true,false,true]   | compile error |
+| +/1 2 3                      | ((x,y:int) => x+y)/[1,2,3] | eq       |
+...
+
 **I will add more cases here**
 
 ```

@@ -44,6 +44,7 @@ test "equal":
 test "where":
   check &[true, false, true] ~ @[0,2]
   check (`&` [3,2,3] === 3) ~ @[0,2]
+  check ("acc"[`&`"acc"==='c']) ~ "cc"
 
 test "index":
   check [3,2,3][[0,2]] ~ [3,3]
