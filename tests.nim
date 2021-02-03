@@ -71,6 +71,7 @@ test "each":
   check each((x:int) => x+10, [1,2,3]) ~ [11,12,13]
   check each((x,y:int) => x+y, [1,2,3], [10,20,30]) ~ [11,22,33]
   check each((x,y,z:float) => x+y+z, [1.0,2,3], [10.0,20,30], [100.0,200,300]) ~ [111.0,222,333]
+  check ~each((x:int) => x>5, [1,5,10]) ~ [true,true,false]
 
 test "over":
   check ((x,y:int) => x+y)/[1,2,3] ~ 6
@@ -83,6 +84,14 @@ test "scan":
   check ((x,y:seq[int]) => x+y)\[@[1,2,3], @[10,20,30]] ~ [@[1,2,3], @[11,22,33]]
   check scan(3, (x:int) => x+1, 10) == [10,11,12,13]
   check scan((x:int) => x<13, (x:int) => x+1, 10) ~ [10,11,12,13]
+
+test "eachright":
+  check eachright(10, (x,y:int) => x+y, [1,2,3]) ~ [11,12,13]
+  check eachright(@[10,20,30], (x:seq[int],y:int) => x+y, [1,2,3]) == [@[11,21,31],@[12,22,32],@[13,23,33]]
+
+test "eachleft":
+  check eachleft(@[10,20,30], (x,y:int) => x+y, 1) ~ [11,21,31]
+  check eachleft([10,20,30], (x:int,y:seq[int]) => x+y, @[1,2,3]) == [@[11,12,13],@[21,22,23],@[31,32,33]]
 
 test "fibonacci":
   let fibs = over(10, (x:seq[int]) => x & ((x,y:int) => x+y)/take(-2, x), @[1,1])

@@ -178,57 +178,65 @@ func `[]`*[T](a: openArray[T], idx: openArray[int]): seq[T] =
   for i, idx in idx:
     result[i] = a[idx]
 
-func `each`*[T](f: proc(_: T): T, x: openArray[T]): seq[T] =   # TODO: Cannot redefine backtick: probably can do via AST processing
-  result = newSeq[T](x.len)
+func each*[T,G](f: proc(_: T): G, x: openArray[T]): seq[G] =   # TODO: Cannot redefine backtick: probably can do via AST processing
+  result = newSeq[G](x.len)
   for i, x in x:
     result[i] = f(x)
 
-func `each`*[T](f: proc(_, u: T): T, a, b: openArray[T]): seq[T] =
+func each*[T,G](f: proc(_, u: T): G, a, b: openArray[T]): seq[G] =
   checkLen(a, b)
-  result = newSeq[T](a.len)
+  result = newSeq[G](a.len)
   for i, x in a:
     result[i] = f(x, b[i])
 
-func `each`*[T](f: proc(_, u, uu: T): T, a, b, c: openArray[T]): seq[T] =
+func each*[T,G](f: proc(_, u, uu: T): G, a, b, c: openArray[T]): seq[G] =
   checkLen(a, b)
-  result = newSeq[T](a.len)
+  result = newSeq[G](a.len)
   for i, x in a:
     result[i] = f(x, b[i], c[i])
 
-func `/`*[T](f: proc(_, u: T): T, x: openArray[T]): T =
+func `/`*[T,G](f: proc(_, u: T): G, x: openArray[T]): G =
   result = x[0]
   for x in x[1..^1]:
     result = f(result, x)
 
-func `over`*[T](n: int, f: proc(_: T): T, x: T): T =
+func `over`*[T,G](n: int, f: proc(_: T): G, x: T): G =
   result = x
   for i in 0..<n:
     result = f(result)
 
-func `over`*[T](f0: proc(_: T): bool, f1: proc(_: T): T, x: T): T =
+func `over`*[T,G](f0: proc(_: T): bool, f1: proc(_: T): G, x: T): G =
   result = x
   while f0(result):
     result = f1(result)
 
-func `\`*[T](f: proc(_, u: T): T, x: openArray[T]): seq[T] =
-  result = newSeq[T](x.len)
+func `\`*[T,G](f: proc(_, u: T): G, x: openArray[T]): seq[G] =
+  result = newSeq[G](x.len)
   result[0] = x[0]
   for i, x in x[1..^1]:
     result[i+1] = f(result[i], x)
 
-func `scan`*[T](n: int, f: proc(_: T): T, x: T): seq[T] =
-  result = newSeq[T](n+1)
+func `scan`*[T,G](n: int, f: proc(_: T): G, x: T): seq[G] =
+  result = newSeq[G](n+1)
   if n <= 0:
     return
   result[0] = x
   for i in 1..n:
     result[i] = f(result[i-1])
 
-func `scan`*[T](f0: proc(_: T): bool, f1: proc(_: T): T, x: T): seq[T] =
-  result = newSeq[T]()
+func `scan`*[T,G](f0: proc(_: T): bool, f1: proc(_: T): G, x: T): seq[G] =
+  result = newSeq[G]()
   result.add(x)
   while f0(result[^1]):
     result.add f1(result[^1])
+
+func eachright*[T,G,U](a:T, f: proc(x:T,y:G):U, b: openArray[G]): seq[U] =
+  each((proc (x:G): U =
+    f(a,x)), b)
+
+func eachleft*[T,G,U](a:openArray[T], f: proc(x:T,y:G):U, b: G): seq[U] =
+  each((proc (x:T): U =
+    f(x,b)), a)
 
 template o*{k.`*` k.asc x}(x: untyped): untyped =
   x.min()
