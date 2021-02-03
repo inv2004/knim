@@ -238,5 +238,11 @@ func eachleft*[T,G,U](a:openArray[T], f: proc(x:T,y:G):U, b: G): seq[U] =
   each((proc (x:T): U =
     f(x,b)), a)
 
+func cross*[T,G,U](a:openArray[T], f: proc(x:T,y:G):U, b:openArray[G]): seq[seq[U]] =
+  let seqA = @a
+  each((proc (xx:G): seq[U] =
+    each((proc (x:T): U =
+      f(x, xx)), seqA)), b)
+
 template o*{k.`*` k.asc x}(x: untyped): untyped =
   x.min()

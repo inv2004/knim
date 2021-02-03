@@ -93,6 +93,9 @@ test "eachleft":
   check eachleft(@[10,20,30], (x,y:int) => x+y, 1) ~ [11,21,31]
   check eachleft([10,20,30], (x:int,y:seq[int]) => x+y, @[1,2,3]) == [@[11,12,13],@[21,22,23],@[31,32,33]]
 
+test "cross":
+  check cross([1,2], (x,y:int) => x+y, [10,20]) ~ [@[11,12], @[21,22]]
+
 test "fibonacci":
   let fibs = over(10, (x:seq[int]) => x & ((x,y:int) => x+y)/take(-2, x), @[1,1])
   check fibs == [1,1,2,3,5,8,13,21,34,55,89,144]
